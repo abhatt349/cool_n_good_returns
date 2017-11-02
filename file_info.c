@@ -10,17 +10,32 @@
 int fsize (char *s) {
   struct stat f;
   stat(s, &f);
-  return stat.st_size;
+  return f.st_size;
+}
+
+int fperms (char *s) {
+  struct stat f;
+  stat(s, &f);
+  return f.st_mode;
+}
+
+char *ftime (char *s) {
+  struct stat f;
+  stat(s, &f);
+  return ctime(&f.st_atime);
 }
 
 
 
 
 int main () {
+  umask(0);
   int f = open("test.txt", O_CREAT | O_WRONLY, 0666);
-  char *s = "this is text";
-  write (f, s, sizeof(s));
+  char *s = "this is text\n";
+  write (f, s, strlen(s));
   close(f);
-  printf("%d\n", fsize("test.txt"));
+  printf("test.txt is %d bytes\n", fsize("test.txt"));
+  printf("File permissions: %o\n", fperms("test.txt"));
+  printf("Last time accessed: %s\n", ftime("test.txt"));
   return 0;
 }
